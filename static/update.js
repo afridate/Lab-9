@@ -1,22 +1,33 @@
-function updateProd(el) {
-    product_id = el.value
-    fetch('/in_stock/' + product_id, {
-        method: 'patch',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({'in_stock': el.checked})
-    })
-    console.log(product_id)
-}
+document.getElementById('add-button').addEventListener('click', () => {
+    const steps = document.getElementById('steps-input').value;
+    const date = document.getElementById('date-input').value;
 
-function addProduct() {
-    let prodName = document.getElementById('prod_name').value
-    let price = document.getElementById('price').value
+    if (!steps || !date) {
+        alert('Заполните оба поля: количество шагов и дату');
+        return;
+    }
+
     fetch('/add', {
-        method: 'post',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({'prod_name': prodName,
-                             'price': price,
-                             'in_stock': true})
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ steps: parseInt(steps), date: date })
     })
-//    console.log("Add")
-}
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Не удалось добавить запись');
+            }
+        });
+});
+
+document.getElementById('clear-button').addEventListener('click', () => {
+    fetch('/clear', { method: 'POST' })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Не удалось очистить ленту');
+            }
+        });
+});
